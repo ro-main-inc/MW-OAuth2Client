@@ -117,7 +117,10 @@ class SpecialOAuth2Client extends SpecialPage {
 
 		$resourceOwner = $this->_provider->getResourceOwner($accessToken);
 		$user = $this->_userHandling( $resourceOwner->toArray() );
-		$user->setCookies();
+
+		// Issue user cookies with the "remember" flag enabled.
+		// This ensures the login persists across browser restarts (not just the current session).
+		$user->setCookies( $wgRequest, null, true );
 
 		global $wgOut, $wgRequest;
 		$title = null;
@@ -209,7 +212,9 @@ class SpecialOAuth2Client extends SpecialPage {
 
 		// Setup the session
 		$wgRequest->getSession()->persist();
-		$user->setCookies();
+		// Issue user cookies with the "remember" flag enabled.
+		// This ensures the login persists across browser restarts (not just the current session).
+		$user->setCookies( $wgRequest, null, true );
 		$this->getContext()->setUser( $user );
 		$user->saveSettings();
 		RequestContext::getMain()->setUser( $user );
